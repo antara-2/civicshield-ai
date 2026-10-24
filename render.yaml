@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: civicshield-ai-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: CIVICSHIELD_DATABASE_URL
+        value: sqlite:///./data/civicshield.db
+      - key: CIVICSHIELD_DEMO_TOKEN
+        value: demo-civicshield-token
+      - key: CIVICSHIELD_SEED_DEMO
+        value: "true"
+      - key: CIVICSHIELD_MEDIA_DIR
+        value: ./data/media
+      - key: CIVICSHIELD_WEATHER_SOURCE
+        value: SIMULATED_DEMO_WEATHER

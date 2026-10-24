@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: civicshield
+      POSTGRES_USER: civicshield
+      POSTGRES_PASSWORD: civicshield-local-only
+    volumes:
+      - civicshield_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U civicshield -d civicshield"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  app:
+    build: .
+    environment:
+      CIVICSHIELD_DATABASE_URL: postgresql+psycopg://civicshield:civicshield-local-only@db:5432/civicshield
+      CIVICSHIELD_DEMO_TOKEN: demo-civicshield-token
+      CIVICSHIELD_SEED_DEMO: "true"
+      CIVICSHIELD_MEDIA_DIR: /srv/civicshield/data/media
+      CIVICSHIELD_WEATHER_SOURCE: SIMULATED_DEMO_WEATHER
+    ports:
+      - "8000:8000"
+    volumes:
+      - civicshield_media:/srv/civicshield/data/media
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  civicshield_pg:
+  civicshield_media:
